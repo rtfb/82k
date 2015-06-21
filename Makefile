@@ -8,4 +8,4 @@ t: 82k
 	./82k -t
 
 %.o: %.c
-	gcc -c -o $@ -std=c99 $<
+	gcc -ggdb -c -o $@ -std=c99 $<

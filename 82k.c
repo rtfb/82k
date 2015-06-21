@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <malloc.h>
 #include <string.h>
+#include <stdbool.h>
+#include <assert.h>
 
 typedef struct _bignum {
     unsigned char *data;
@@ -52,6 +54,19 @@ void bignum_from_int(bignum *n, int s) {
     }
 }
 
+void bignum_inc(bignum *n) {
+    bool carry = false;
+    int i = 0;
+    do {
+        carry = n->data[i] + 1 > 255;
+        n->data[i] += 1;
+        ++i;
+    } while (carry);
+    if (i > n->size) {
+        n->size = i;
+    }
+}
+
 void test() {
     bignum n;
     bignum_init(&n);
@@ -62,6 +77,24 @@ void test() {
         printf("%d = ", arr[i]);
         bignum_dump(&n);
     }
+    bignum_from_int(&n, 1);
+    bignum_inc(&n);
+    assert(n.size == 1);
+    assert(n.data[0] == 2);
+    assert(n.data[1] == 0);
+    bignum_inc(&n);
+    assert(n.size == 1);
+    assert(n.data[0] == 3);
+    assert(n.data[1] == 0);
+    bignum_from_int(&n, 255);
+    bignum_inc(&n);
+    assert(n.size == 2);
+    assert(n.data[0] == 0);
+    assert(n.data[1] == 1);
+    bignum_inc(&n);
+    assert(n.size == 2);
+    assert(n.data[0] == 1);
+    assert(n.data[1] == 1);
     bignum_free(&n);
 }
 
