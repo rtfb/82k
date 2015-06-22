@@ -28,7 +28,7 @@ void bignum_free(bignum *n) {
 }
 
 void bignum_dump(bignum *n) {
-    printf("{%d (%d): [", n->size, n->cap);
+    printf("{%zu (%zu): [", n->size, n->cap);
     if (n->size == 0) {
         printf("]}\n");
         return;
