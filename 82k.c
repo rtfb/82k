@@ -39,6 +39,37 @@ void bignum_dump(bignum *n) {
     printf("%d]}\n", n->data[n->size - 1]);
 }
 
+void bignum_bprint(bignum *n) {
+    char *nibbles[] = {
+        "0000",
+        "0001",
+        "0010",
+        "0011",
+        "0100",
+        "0101",
+        "0110",
+        "0111",
+        "1000",
+        "1001",
+        "1010",
+        "1011",
+        "1100",
+        "1101",
+        "1110",
+        "1111",
+    };
+    for (int i = n->size - 1; i >= 0; --i) {
+        char upper = (n->data[i] & 0xf0) >> 4;
+        char lower = n->data[i] & 0x0f;
+        printf("%s %s", nibbles[upper], nibbles[lower]);
+        if (i == 0) {
+            printf("\n");
+        } else {
+            printf("  ");
+        }
+    }
+}
+
 void bignum_from_int(bignum *n, int s) {
     unsigned char b1 =  s & 0x000000ff;
     unsigned char b2 = (s & 0x0000ff00) >> 8;
@@ -95,6 +126,13 @@ void test() {
     assert(n.size == 2);
     assert(n.data[0] == 1);
     assert(n.data[1] == 1);
+    bignum_from_int(&n, 65536);
+    for (int i = 0; i < 22; ++i) {
+        bignum_inc(&n);
+        bignum_bprint(&n);
+    }
+    bignum_from_int(&n, 82000);
+    bignum_bprint(&n);
     bignum_free(&n);
 }
 
