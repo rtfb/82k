@@ -98,6 +98,32 @@ void bignum_inc(bignum *n) {
     }
 }
 
+char* limited_precision_base_conv(long int number, size_t base) {
+    char base_digits[16] = {
+        '0', '1', '2', '3', '4', '5', '6', '7',
+        '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'
+    };
+    static char buff[64] = "\0";
+    int converted_number[64];
+    int next_digit, index=0;
+
+    // convert to the indicated base
+    while (number != 0) {
+        converted_number[index] = number % base;
+        number = number / base;
+        ++index;
+    }
+
+    // now print the result in reverse order
+    --index;  // back up to last entry in the array
+    int i = 0;
+    for (; index >= 0; --index, ++i) {
+        buff[i] = base_digits[converted_number[index]];
+    }
+    buff[i] = '\0';
+    return buff;
+}
+
 void test() {
     bignum n;
     bignum_init(&n);
@@ -134,6 +160,10 @@ void test() {
     bignum_from_int(&n, 82000);
     bignum_bprint(&n);
     bignum_free(&n);
+    int m = 82000;
+    for (int b = 2; b < 7; ++b) {
+        printf("%d (base %d) = %s\n", m, b, limited_precision_base_conv(m, b));
+    }
 }
 
 int main(int argc, char *argv[]) {
