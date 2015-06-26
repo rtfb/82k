@@ -4,20 +4,25 @@
 #include <stdbool.h>
 #include <assert.h>
 
+#define DEFAULT_CAPACITY 128
+
 typedef struct _bignum {
     unsigned char *data;
     size_t        size;
     size_t        cap;
 } bignum;
 
-void bignum_init(bignum *n) {
-    int cap = 128;
+void bignum_init_cap(bignum *n, size_t cap) {
     n->data = (unsigned char*) malloc(cap * sizeof(unsigned char));
     n->size = 0;
     n->cap = cap;
     for (int i = 0; i < cap; ++i) {
         n->data[i] = 0;
     }
+}
+
+void bignum_init(bignum *n) {
+    bignum_init_cap(n, DEFAULT_CAPACITY);
 }
 
 void bignum_free(bignum *n) {
