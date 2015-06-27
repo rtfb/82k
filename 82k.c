@@ -13,7 +13,7 @@ typedef struct _bignum {
 } bignum;
 
 void bignum_init_cap(bignum *n, size_t cap) {
-    n->data = (unsigned char*) malloc(cap * sizeof(unsigned char));
+    n->data = malloc(cap * sizeof(unsigned char));
     n->size = 0;
     n->cap = cap;
     for (int i = 0; i < cap; ++i) {
@@ -23,6 +23,11 @@ void bignum_init_cap(bignum *n, size_t cap) {
 
 void bignum_init(bignum *n) {
     bignum_init_cap(n, DEFAULT_CAPACITY);
+}
+
+void bignum_resize(bignum *n) {
+    n->cap *= 2;
+    n->data = realloc(n->data, n->cap);
 }
 
 void bignum_free(bignum *n) {
@@ -75,7 +80,13 @@ void bignum_bprint(bignum *n) {
     }
 }
 
+void bignum_from_char(bignum *n, unsigned char s) {
+    n->data[0] = s;
+    n->size = 1;
+}
+
 void bignum_from_int(bignum *n, int s) {
+    assert(n->cap >= 4);
     unsigned char b1 =  s & 0x000000ff;
     unsigned char b2 = (s & 0x0000ff00) >> 8;
     unsigned char b3 = (s & 0x00ff0000) >> 16;
@@ -94,6 +105,9 @@ void bignum_inc(bignum *n) {
     bool carry = false;
     int i = 0;
     do {
+        if (i >= n->cap) {
+            bignum_resize(n);
+        }
         carry = n->data[i] + 1 > 255;
         n->data[i] += 1;
         ++i;
@@ -169,6 +183,18 @@ void test() {
     for (int b = 2; b < 7; ++b) {
         printf("%d (base %d) = %s\n", m, b, limited_precision_base_conv(m, b));
     }
+    bignum small;
+    bignum_init_cap(&small, 1);
+    bignum_from_char(&small, 254);
+    assert(small.size == 1);
+    assert(small.cap == 1);
+    bignum_inc(&small);
+    assert(small.size == 1);
+    assert(small.cap == 1);
+    bignum_inc(&small);
+    assert(small.size == 2);
+    assert(small.cap == 2);
+    bignum_free(&small);
 }
 
 int main(int argc, char *argv[]) {
