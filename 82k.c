@@ -117,6 +117,28 @@ void bignum_inc(bignum *n) {
     }
 }
 
+// a += b
+void bignum_add(bignum *a, bignum *b) {
+    bool carry = false;
+    int this = 0;
+    int i = 0;
+    do {
+        if (i >= a->cap) {
+            bignum_resize(a);
+        }
+        this = a->data[i] + b->data[i] + carry;
+        carry = this > 255;
+        if (carry) {
+            this -= 256;
+        }
+        a->data[i] = this;
+        ++i;
+    } while (carry > 0 || i < b->size);
+    if (i > a->size) {
+        a->size = i;
+    }
+}
+
 char* limited_precision_base_conv(long int number, size_t base) {
     char base_digits[16] = {
         '0', '1', '2', '3', '4', '5', '6', '7',
@@ -195,6 +217,40 @@ void test() {
     assert(small.size == 2);
     assert(small.cap == 2);
     bignum_free(&small);
+    bignum a, b;
+    bignum_init(&a);
+    bignum_init(&b);
+    bignum_from_int(&a, 82);
+    bignum_from_int(&b, 250);
+    bignum_dump(&a);
+    bignum_dump(&b);
+    bignum_add(&a, &b);
+    bignum_dump(&a);
+    assert(a.size == 2);
+    assert(a.data[0] == 76);
+    assert(a.data[1] == 1);
+    bignum_from_int(&a, 82000);
+    bignum_from_int(&b, 150000);
+    bignum_dump(&a);
+    bignum_dump(&b);
+    bignum_add(&a, &b);
+    bignum_dump(&a);
+    assert(a.size == 3);
+    assert(a.data[0] == 64);
+    assert(a.data[1] == 138);
+    assert(a.data[2] == 3);
+    bignum_from_int(&a, 15);
+    bignum_from_int(&b, 232000);
+    bignum_dump(&a);
+    bignum_dump(&b);
+    bignum_add(&a, &b);
+    bignum_dump(&a);
+    assert(a.size == 3);
+    assert(a.data[0] == 79);
+    assert(a.data[1] == 138);
+    assert(a.data[2] == 3);
+    bignum_free(&a);
+    bignum_free(&b);
 }
 
 int main(int argc, char *argv[]) {
