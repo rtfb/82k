@@ -37,6 +37,14 @@ void bignum_free(bignum *n) {
     n->data = NULL;
 }
 
+void bignum_copy(bignum *dest, bignum *src) {
+    dest->cap = src->cap;
+    dest->size = src->size;
+    free(dest->data);
+    dest->data = malloc(src->cap * sizeof(unsigned char));
+    memcpy(dest->data, src->data, src->cap);
+}
+
 void bignum_dump(bignum *n) {
     printf("{%zu (%zu): [", n->size, n->cap);
     if (n->size == 0) {
@@ -137,6 +145,20 @@ void bignum_add(bignum *a, bignum *b) {
     if (i > a->size) {
         a->size = i;
     }
+}
+
+// a *= b
+void bignum_mul_int(bignum *a, unsigned int b) {
+    bignum tmp;
+    bignum_init(&tmp);
+    bignum_copy(&tmp, a);
+    --b;
+    // XXX: this loop is probably quite inefficient, think of something better
+    while (b > 0) {
+        bignum_add(a, &tmp);
+        --b;
+    }
+    bignum_free(&tmp);
 }
 
 char* limited_precision_base_conv(long int number, size_t base) {
@@ -251,6 +273,14 @@ void test() {
     assert(a.data[2] == 3);
     bignum_free(&a);
     bignum_free(&b);
+    bignum x;
+    bignum_init(&x);
+    bignum_from_int(&x, 17);
+    bignum_mul_int(&x, 3);
+    assert(x.size == 1);
+    assert(x.data[0] == 51);
+    assert(x.data[1] == 0);
+    bignum_free(&x);
 }
 
 int main(int argc, char *argv[]) {
