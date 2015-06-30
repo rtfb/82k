@@ -161,6 +161,32 @@ void bignum_mul_int(bignum *a, unsigned int b) {
     bignum_free(&tmp);
 }
 
+/*
+Examples:
+82000 (base 3) = 11011111001 =
+1*3**0 + 0*3**1 + 0*3**2 + 1*3**3 +3**4 +3**5 +3**6 +3**7 +0*3**8 +3**9 +3**10
+
+82000 (base 5) = 10111000 =
+0*5**0 + 0*5**1 + 0*5**2 + 1*5**3 + 1*5**4 + 1*5**5 + 0*5**6 + 1*5**7
+*/
+void bignum_from_string_binary(bignum *n, char const* s, size_t base) {
+    char const *end_of_s = s + strlen(s) - 1;
+    bignum_from_int(n, 0);
+    bignum multiplier;
+    bignum_init(&multiplier);
+    bignum_from_int(&multiplier, 1);
+    while (end_of_s != s) {
+        assert((*end_of_s == '1') || (*end_of_s == '0'));
+        if (*end_of_s == '1') {
+            bignum_add(n, &multiplier);
+        }
+        bignum_mul_int(&multiplier, base);
+        --end_of_s;
+    }
+    bignum_add(n, &multiplier);
+    bignum_free(&multiplier);
+}
+
 char* limited_precision_base_conv(long int number, size_t base) {
     char base_digits[16] = {
         '0', '1', '2', '3', '4', '5', '6', '7',
@@ -185,6 +211,32 @@ char* limited_precision_base_conv(long int number, size_t base) {
     }
     buff[i] = '\0';
     return buff;
+}
+
+void test_bignum_from_string_binary() {
+    bignum fs;
+    bignum_init(&fs);
+    bignum_from_string_binary(&fs, "10100000001010000", 2);
+    assert(fs.size == 3);
+    assert(fs.data[0] == 80);
+    assert(fs.data[1] == 64);
+    assert(fs.data[2] == 1);
+    bignum_from_string_binary(&fs, "11011111001", 3);
+    assert(fs.size == 3);
+    assert(fs.data[0] == 80);
+    assert(fs.data[1] == 64);
+    assert(fs.data[2] == 1);
+    bignum_from_string_binary(&fs, "110001100", 4);
+    assert(fs.size == 3);
+    assert(fs.data[0] == 80);
+    assert(fs.data[1] == 64);
+    assert(fs.data[2] == 1);
+    bignum_from_string_binary(&fs, "10111000", 5);
+    assert(fs.size == 3);
+    assert(fs.data[0] == 80);
+    assert(fs.data[1] == 64);
+    assert(fs.data[2] == 1);
+    bignum_free(&fs);
 }
 
 void test() {
@@ -281,6 +333,7 @@ void test() {
     assert(x.data[0] == 51);
     assert(x.data[1] == 0);
     bignum_free(&x);
+    test_bignum_from_string_binary();
 }
 
 int main(int argc, char *argv[]) {
