@@ -88,17 +88,21 @@ void bignum_bprint(bignum *n) {
     }
 }
 
-void bignum_print_int(bignum *n) {
-    if (n->size > 4) {
-        printf("<Inf>\n");
-        return;
-    }
+int bignum_to_int(bignum *n) {
     unsigned int num =
            n->data[0]
         | (n->data[1] << 8)
         | (n->data[2] << 16)
         | (n->data[3] << 24);
-    printf("%u\n", num);
+    return num;
+}
+
+void bignum_print_int(bignum *n) {
+    if (n->size > 4) {
+        printf("<Inf>\n");
+        return;
+    }
+    printf("%u\n", bignum_to_int(n));
 }
 
 void bignum_from_char(bignum *n, unsigned char s) {
@@ -268,6 +272,33 @@ void test_bignum_from_string_binary() {
     bignum_free(&fs);
 }
 
+bool check_base(bignum *n, int base) {
+    // TODO
+    return false;
+}
+
+void cover_all_bases() {
+    bignum n;
+    bignum_init(&n);
+    int bn_as_int = 1;
+    bignum_from_int(&n, bn_as_int);
+    while (bn_as_int < 100000) {
+        int base = 5;
+        for (; base > 2; ++base) {
+            if (!check_base(&n, base)) {
+                break;
+            }
+        }
+        if (base == 2) {
+            printf("covers all bases from 2 to 5: ");
+            bignum_print_int(&n);
+        }
+        bignum_inc(&n);
+        bn_as_int = bignum_to_int(&n);
+    }
+    bignum_free(&n);
+}
+
 void test() {
     bignum n;
     bignum_init(&n);
@@ -385,6 +416,7 @@ void test() {
     assert(bn2.data[1] == 4);
     bignum_free(&bn);
     bignum_free(&bn2);
+    cover_all_bases();
 }
 
 int main(int argc, char *argv[]) {
