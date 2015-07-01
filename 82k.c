@@ -88,6 +88,19 @@ void bignum_bprint(bignum *n) {
     }
 }
 
+void bignum_print_int(bignum *n) {
+    if (n->size > 4) {
+        printf("<Inf>\n");
+        return;
+    }
+    unsigned int num =
+           n->data[0]
+        | (n->data[1] << 8)
+        | (n->data[2] << 16)
+        | (n->data[3] << 24);
+    printf("%u\n", num);
+}
+
 void bignum_from_char(bignum *n, unsigned char s) {
     n->data[0] = s;
     n->size = 1;
@@ -334,6 +347,17 @@ void test() {
     assert(x.data[1] == 0);
     bignum_free(&x);
     test_bignum_from_string_binary();
+    bignum bb;
+    bignum_init(&bb);
+    bignum_from_int(&bb, 82000);
+    bignum_print_int(&bb);
+    bignum_from_int(&bb, 149327);
+    bignum_print_int(&bb);
+    bignum_from_int(&bb, 4294967295);
+    bignum_print_int(&bb);
+    bignum_inc(&bb);
+    bignum_print_int(&bb);
+    bignum_free(&bb);
 }
 
 int main(int argc, char *argv[]) {
