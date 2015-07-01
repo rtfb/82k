@@ -174,6 +174,22 @@ void bignum_mul_int(bignum *a, unsigned int b) {
     bignum_free(&tmp);
 }
 
+// assign n from s, treat s as being in base 'base'
+void bignum_from_bignum(bignum *n, bignum* s, size_t base) {
+    bignum multiplier;
+    bignum_from_int(n, 0);
+    bignum_init(&multiplier);
+    bignum_from_int(&multiplier, 1);
+    for (int i = 0; i < s->size; ++i) {
+        for (unsigned char mask = 1; mask != 0; mask <<= 1) {
+            if (s->data[i] & mask) {
+                bignum_add(n, &multiplier);
+            }
+            bignum_mul_int(&multiplier, base);
+        }
+    }
+}
+
 /*
 Examples:
 82000 (base 3) = 11011111001 =
@@ -358,6 +374,17 @@ void test() {
     bignum_inc(&bb);
     bignum_print_int(&bb);
     bignum_free(&bb);
+    bignum bn;
+    bignum bn2;
+    bignum_init(&bn);
+    bignum_init(&bn2);
+    bignum_from_int(&bn, 1047);
+    bignum_from_bignum(&bn2, &bn, 2);
+    assert(bn2.size == 2);
+    assert(bn2.data[0] == 23);
+    assert(bn2.data[1] == 4);
+    bignum_free(&bn);
+    bignum_free(&bn2);
 }
 
 int main(int argc, char *argv[]) {
