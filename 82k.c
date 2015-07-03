@@ -178,6 +178,41 @@ void bignum_mul_int(bignum *a, unsigned int b) {
     bignum_free(&tmp);
 }
 
+// remainder is optional
+// 7 / 2
+// 0;
+// while (2 < 7)
+//   1; 5
+//   2; 3
+//   3; 1
+void bignum_div_mod(bignum *a, bignum *b, bignum *remainder) {
+    bignum result;
+    bignum_init(&result);
+    while (bignum_lt(b, a)) {
+        bignum_inc(&result);
+        bignum_sub(a, b);
+    }
+    if (remainder) {
+        bignum_copy(remainder, a);
+    }
+    bignum_copy(a, &result);
+    bignum_free(&result);
+}
+
+// a /= b
+void bignum_div(bignum *a, bignum *b) {
+    bignum_div_mod(a, b, NULL);
+}
+
+// a %= b
+void bignum_mod(bignum *a, bignum *b) {
+    bignum tmp;
+    bignum_init(&tmp);
+    bignum_div_mod(a, b, &tmp);
+    bignum_copy(a, &tmp);
+    bignum_free(&tmp);
+}
+
 // assign n from s, treat s as being in base 'base'
 void bignum_from_bignum(bignum *n, bignum* s, size_t base) {
     bignum multiplier;
