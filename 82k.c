@@ -178,6 +178,22 @@ void bignum_mul_int(bignum *a, unsigned int b) {
     bignum_free(&tmp);
 }
 
+bool bignum_lt(bignum *a, bignum *b) {
+    if (a->size < b->size) {
+        return true;
+    } else if (a->size > b->size) {
+        return false;
+    }
+    for (int i = a->size - 1; i >= 0; --i) {
+        if (a->data[i] < b->data[i]) {
+            return true;
+        } else if (a->data[i] > b->data[i]) {
+            return false;
+        }
+    }
+    return false;
+}
+
 // remainder is optional
 // 7 / 2
 // 0;
@@ -334,6 +350,27 @@ void cover_all_bases() {
     bignum_free(&n);
 }
 
+void test_bignum_lt() {
+    bignum a, b;
+    bignum_init(&a);
+    bignum_init(&b);
+    bignum_from_int(&a, 17);
+    bignum_from_int(&b, 42000);
+    assert(bignum_lt(&a, &b) == true);
+    bignum_from_int(&a, 17324);
+    bignum_from_int(&b, 17324);
+    assert(bignum_lt(&a, &b) == false);
+    bignum_from_int(&a, 17323);
+    bignum_from_int(&b, 17324);
+    assert(bignum_lt(&a, &b) == true);
+    bignum_from_int(&a, 23);
+    bignum_from_int(&b, 17324);
+    assert(bignum_lt(&a, &b) == true);
+    bignum_from_int(&a, 17324);
+    bignum_from_int(&b, 23);
+    assert(bignum_lt(&a, &b) == false);
+}
+
 void test() {
     bignum n;
     bignum_init(&n);
@@ -451,6 +488,7 @@ void test() {
     assert(bn2.data[1] == 4);
     bignum_free(&bn);
     bignum_free(&bn2);
+    test_bignum_lt();
     cover_all_bases();
 }
 
