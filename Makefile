@@ -1,5 +1,5 @@
 
-OBJ=82k.o tests.o
+OBJ=82k.o tests.o bignum.o
 
 82k: $(OBJ)
 	gcc -o $@ $^
