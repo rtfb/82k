@@ -1,11 +1,27 @@
+INCDIR=inc
+CC=gcc
+CFLAGS=-I$(INCDIR) -std=c99 -ggdb
 
-OBJ=82k.o tests.o bignum.o
+OBJDIR=obj
+
+_DEPS = bignum.h tests.h
+DEPS = $(patsubst %,$(INCDIR)/%,$(_DEPS))
+
+_OBJ = bignum.o tests.o 82k.o
+OBJ = $(patsubst %,$(OBJDIR)/%,$(_OBJ))
+
+$(OBJDIR)/%.o: %.c $(DEPS)
+	@mkdir -p $(OBJDIR)
+	$(CC) -c -o $@ $< $(CFLAGS)
 
 82k: $(OBJ)
-	gcc -o $@ $^
+	gcc -o $@ $^ $(CFLAGS)
 
 t: 82k
 	./82k -t
 
-%.o: %.c
-	gcc -ggdb -c -o $@ -std=c99 $<
+.PHONY: clean t
+
+clean:
+	rm $(OBJDIR)/*.o
+	rm 82k
