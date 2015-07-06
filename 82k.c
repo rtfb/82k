@@ -4,13 +4,8 @@
 #include <stdbool.h>
 #include <assert.h>
 
-#define DEFAULT_CAPACITY 128
-
-typedef struct _bignum {
-    unsigned char *data;
-    size_t        size;
-    size_t        cap;
-} bignum;
+#include "bignum.h"
+#include "tests.h"
 
 void bignum_init_cap(bignum *n, size_t cap) {
     n->data = malloc(cap * sizeof(unsigned char));
@@ -297,32 +292,6 @@ char* limited_precision_base_conv(long int number, size_t base) {
     return buff;
 }
 
-void test_bignum_from_string_binary() {
-    bignum fs;
-    bignum_init(&fs);
-    bignum_from_string_binary(&fs, "10100000001010000", 2);
-    assert(fs.size == 3);
-    assert(fs.data[0] == 80);
-    assert(fs.data[1] == 64);
-    assert(fs.data[2] == 1);
-    bignum_from_string_binary(&fs, "11011111001", 3);
-    assert(fs.size == 3);
-    assert(fs.data[0] == 80);
-    assert(fs.data[1] == 64);
-    assert(fs.data[2] == 1);
-    bignum_from_string_binary(&fs, "110001100", 4);
-    assert(fs.size == 3);
-    assert(fs.data[0] == 80);
-    assert(fs.data[1] == 64);
-    assert(fs.data[2] == 1);
-    bignum_from_string_binary(&fs, "10111000", 5);
-    assert(fs.size == 3);
-    assert(fs.data[0] == 80);
-    assert(fs.data[1] == 64);
-    assert(fs.data[2] == 1);
-    bignum_free(&fs);
-}
-
 bool check_base(bignum *n, int base) {
     // TODO
     return false;
@@ -350,151 +319,10 @@ void cover_all_bases() {
     bignum_free(&n);
 }
 
-void test_bignum_lt() {
-    bignum a, b;
-    bignum_init(&a);
-    bignum_init(&b);
-    bignum_from_int(&a, 17);
-    bignum_from_int(&b, 42000);
-    assert(bignum_lt(&a, &b) == true);
-    bignum_from_int(&a, 17324);
-    bignum_from_int(&b, 17324);
-    assert(bignum_lt(&a, &b) == false);
-    bignum_from_int(&a, 17323);
-    bignum_from_int(&b, 17324);
-    assert(bignum_lt(&a, &b) == true);
-    bignum_from_int(&a, 23);
-    bignum_from_int(&b, 17324);
-    assert(bignum_lt(&a, &b) == true);
-    bignum_from_int(&a, 17324);
-    bignum_from_int(&b, 23);
-    assert(bignum_lt(&a, &b) == false);
-}
-
-void test() {
-    bignum n;
-    bignum_init(&n);
-    bignum_dump(&n);
-    int arr[] = {42, 255, 256, 257, 258, 65535+17};
-    for (int i = 0; i < sizeof(arr) / sizeof(arr[0]); ++i) {
-        bignum_from_int(&n, arr[i]);
-        printf("%d = ", arr[i]);
-        bignum_dump(&n);
-    }
-    bignum_from_int(&n, 1);
-    bignum_inc(&n);
-    assert(n.size == 1);
-    assert(n.data[0] == 2);
-    assert(n.data[1] == 0);
-    bignum_inc(&n);
-    assert(n.size == 1);
-    assert(n.data[0] == 3);
-    assert(n.data[1] == 0);
-    bignum_from_int(&n, 255);
-    bignum_inc(&n);
-    assert(n.size == 2);
-    assert(n.data[0] == 0);
-    assert(n.data[1] == 1);
-    bignum_inc(&n);
-    assert(n.size == 2);
-    assert(n.data[0] == 1);
-    assert(n.data[1] == 1);
-    bignum_from_int(&n, 65536);
-    for (int i = 0; i < 22; ++i) {
-        bignum_inc(&n);
-        bignum_bprint(&n);
-    }
-    bignum_from_int(&n, 82000);
-    bignum_bprint(&n);
-    bignum_free(&n);
-    int m = 82000;
-    for (int b = 2; b < 7; ++b) {
-        printf("%d (base %d) = %s\n", m, b, limited_precision_base_conv(m, b));
-    }
-    bignum small;
-    bignum_init_cap(&small, 1);
-    bignum_from_char(&small, 254);
-    assert(small.size == 1);
-    assert(small.cap == 1);
-    bignum_inc(&small);
-    assert(small.size == 1);
-    assert(small.cap == 1);
-    bignum_inc(&small);
-    assert(small.size == 2);
-    assert(small.cap == 2);
-    bignum_free(&small);
-    bignum a, b;
-    bignum_init(&a);
-    bignum_init(&b);
-    bignum_from_int(&a, 82);
-    bignum_from_int(&b, 250);
-    bignum_dump(&a);
-    bignum_dump(&b);
-    bignum_add(&a, &b);
-    bignum_dump(&a);
-    assert(a.size == 2);
-    assert(a.data[0] == 76);
-    assert(a.data[1] == 1);
-    bignum_from_int(&a, 82000);
-    bignum_from_int(&b, 150000);
-    bignum_dump(&a);
-    bignum_dump(&b);
-    bignum_add(&a, &b);
-    bignum_dump(&a);
-    assert(a.size == 3);
-    assert(a.data[0] == 64);
-    assert(a.data[1] == 138);
-    assert(a.data[2] == 3);
-    bignum_from_int(&a, 15);
-    bignum_from_int(&b, 232000);
-    bignum_dump(&a);
-    bignum_dump(&b);
-    bignum_add(&a, &b);
-    bignum_dump(&a);
-    assert(a.size == 3);
-    assert(a.data[0] == 79);
-    assert(a.data[1] == 138);
-    assert(a.data[2] == 3);
-    bignum_free(&a);
-    bignum_free(&b);
-    bignum x;
-    bignum_init(&x);
-    bignum_from_int(&x, 17);
-    bignum_mul_int(&x, 3);
-    assert(x.size == 1);
-    assert(x.data[0] == 51);
-    assert(x.data[1] == 0);
-    bignum_free(&x);
-    test_bignum_from_string_binary();
-    bignum bb;
-    bignum_init(&bb);
-    bignum_from_int(&bb, 82000);
-    bignum_print_int(&bb);
-    bignum_from_int(&bb, 149327);
-    bignum_print_int(&bb);
-    bignum_from_int(&bb, 4294967295);
-    bignum_print_int(&bb);
-    bignum_inc(&bb);
-    bignum_print_int(&bb);
-    bignum_free(&bb);
-    bignum bn;
-    bignum bn2;
-    bignum_init(&bn);
-    bignum_init(&bn2);
-    bignum_from_int(&bn, 1047);
-    bignum_from_bignum(&bn2, &bn, 2);
-    assert(bn2.size == 2);
-    assert(bn2.data[0] == 23);
-    assert(bn2.data[1] == 4);
-    bignum_free(&bn);
-    bignum_free(&bn2);
-    test_bignum_lt();
-    cover_all_bases();
-}
-
 int main(int argc, char *argv[]) {
     if (argc > 1 && 0 == strcmp(argv[1], "-t")) {
         test();
+        cover_all_bases();
     }
     return 0;
 }
