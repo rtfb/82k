@@ -10,6 +10,7 @@ void bignum_init_cap(bignum *n, size_t cap) {
     n->data = malloc(cap * sizeof(unsigned char));
     n->size = 0;
     n->cap = cap;
+    n->negative = false;
     for (int i = 0; i < cap; ++i) {
         n->data[i] = 0;
     }
@@ -115,6 +116,7 @@ void bignum_from_int(bignum *n, int s) {
     n->data[2] = b3;
     n->data[3] = b4;
     n->size = 4;
+    n->negative = false;
     for (int i = 3; i >= 0 && n->data[i] == 0; --i) {
         n->size -= 1;
     }
@@ -155,6 +157,38 @@ void bignum_add(bignum *a, bignum *b) {
     } while (carry > 0 || i < b->size);
     if (i > a->size) {
         a->size = i;
+    }
+}
+
+// a -= b
+// If a turns out negative, only a->negative is set to true, but otherwise
+// result is undefined
+void bignum_sub(bignum* a, bignum *b) {
+    if (b->size > a->size) {
+        a->negative = true;
+        return;
+    }
+    int subtrahend = 0;
+    int difference = 0;
+    for (int i = 0; i < b->size; ++i) {
+        subtrahend += b->data[i];
+        difference = a->data[i] - subtrahend;
+        if (difference < 0) {
+            a->data[i] = 0;
+            subtrahend = difference;
+        } else {
+            a->data[i] = difference;
+            subtrahend = 0;
+        }
+    }
+    if (difference < 0) {
+        a->negative = true;
+    }
+    while (a->size > 0 && a->data[a->size - 1] == 0) {
+        --a->size;
+    }
+    if (a->size == 0) {
+        a->size = 1;
     }
 }
 

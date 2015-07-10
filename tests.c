@@ -21,6 +21,38 @@ void test_bignum_lt() {
     bignum_from_int(&a, 17324);
     bignum_from_int(&b, 23);
     assert(bignum_lt(&a, &b) == false);
+    bignum_free(&a);
+    bignum_free(&b);
+}
+
+void test_bignum_sub() {
+    bignum a, b;
+    bignum_init(&a);
+    bignum_init(&b);
+    bignum_from_int(&a, 17);
+    bignum_from_int(&b, 13);
+    bignum_sub(&a, &b);
+    assert(a.data[0] == 4);
+    assert(a.negative == false);
+    bignum_from_int(&a, 13);
+    bignum_from_int(&b, 17);
+    bignum_sub(&a, &b);
+    assert(a.negative == true);
+    bignum_from_int(&a, 13);
+    bignum_from_int(&b, 13);
+    bignum_sub(&a, &b);
+    assert(a.negative == false);
+    assert(a.data[0] == 0);
+    assert(a.size == 1);
+    // test size shrink
+    bignum_from_int(&a, 13987654);
+    bignum_from_int(&b, 13987651);
+    bignum_sub(&a, &b);
+    assert(a.negative == false);
+    assert(a.data[0] == 3);
+    assert(a.size == 1);
+    bignum_free(&a);
+    bignum_free(&b);
 }
 
 void test_bignum_from_string_binary() {
@@ -167,4 +199,5 @@ void test() {
     bignum_free(&bn);
     bignum_free(&bn2);
     test_bignum_lt();
+    test_bignum_sub();
 }

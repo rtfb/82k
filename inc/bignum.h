@@ -10,6 +10,7 @@ typedef struct _bignum {
     unsigned char *data;
     size_t        size;
     size_t        cap;
+    bool          negative;
 } bignum;
 
 void bignum_init_cap(bignum *n, size_t cap);
@@ -26,6 +27,7 @@ void bignum_from_char(bignum *n, unsigned char s);
 void bignum_from_int(bignum *n, int s);
 void bignum_inc(bignum *n);
 void bignum_add(bignum *a, bignum *b);
+void bignum_sub(bignum* a, bignum *b);
 void bignum_mul_int(bignum *a, unsigned int b);
 bool bignum_lt(bignum *a, bignum *b);
 void bignum_div_mod(bignum *a, bignum *b, bignum *remainder);
