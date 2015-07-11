@@ -81,7 +81,7 @@ void test_bignum_from_string_binary() {
     bignum_free(&fs);
 }
 
-void test() {
+void eyeball_tests() {
     bignum n;
     bignum_init(&n);
     bignum_dump(&n);
@@ -91,6 +91,34 @@ void test() {
         printf("%d = ", arr[i]);
         bignum_dump(&n);
     }
+    bignum_from_int(&n, 65536);
+    for (int i = 0; i < 22; ++i) {
+        bignum_inc(&n);
+        bignum_bprint(&n);
+    }
+    bignum_from_int(&n, 82000);
+    bignum_bprint(&n);
+    bignum_free(&n);
+    int m = 82000;
+    for (int b = 2; b < 7; ++b) {
+        printf("%d (base %d) = %s\n", m, b, limited_precision_base_conv(m, b));
+    }
+    bignum bb;
+    bignum_init(&bb);
+    bignum_from_int(&bb, 82000);
+    bignum_print_int(&bb);
+    bignum_from_int(&bb, 149327);
+    bignum_print_int(&bb);
+    bignum_from_int(&bb, 4294967295);
+    bignum_print_int(&bb);
+    bignum_inc(&bb);
+    bignum_print_int(&bb);
+    bignum_free(&bb);
+}
+
+void test() {
+    bignum n;
+    bignum_init(&n);
     bignum_from_int(&n, 1);
     bignum_inc(&n);
     assert(n.size == 1);
@@ -109,18 +137,7 @@ void test() {
     assert(n.size == 2);
     assert(n.data[0] == 1);
     assert(n.data[1] == 1);
-    bignum_from_int(&n, 65536);
-    for (int i = 0; i < 22; ++i) {
-        bignum_inc(&n);
-        bignum_bprint(&n);
-    }
-    bignum_from_int(&n, 82000);
-    bignum_bprint(&n);
     bignum_free(&n);
-    int m = 82000;
-    for (int b = 2; b < 7; ++b) {
-        printf("%d (base %d) = %s\n", m, b, limited_precision_base_conv(m, b));
-    }
     bignum small;
     bignum_init_cap(&small, 1);
     bignum_from_char(&small, 254);
@@ -138,29 +155,20 @@ void test() {
     bignum_init(&b);
     bignum_from_int(&a, 82);
     bignum_from_int(&b, 250);
-    bignum_dump(&a);
-    bignum_dump(&b);
     bignum_add(&a, &b);
-    bignum_dump(&a);
     assert(a.size == 2);
     assert(a.data[0] == 76);
     assert(a.data[1] == 1);
     bignum_from_int(&a, 82000);
     bignum_from_int(&b, 150000);
-    bignum_dump(&a);
-    bignum_dump(&b);
     bignum_add(&a, &b);
-    bignum_dump(&a);
     assert(a.size == 3);
     assert(a.data[0] == 64);
     assert(a.data[1] == 138);
     assert(a.data[2] == 3);
     bignum_from_int(&a, 15);
     bignum_from_int(&b, 232000);
-    bignum_dump(&a);
-    bignum_dump(&b);
     bignum_add(&a, &b);
-    bignum_dump(&a);
     assert(a.size == 3);
     assert(a.data[0] == 79);
     assert(a.data[1] == 138);
@@ -176,17 +184,6 @@ void test() {
     assert(x.data[1] == 0);
     bignum_free(&x);
     test_bignum_from_string_binary();
-    bignum bb;
-    bignum_init(&bb);
-    bignum_from_int(&bb, 82000);
-    bignum_print_int(&bb);
-    bignum_from_int(&bb, 149327);
-    bignum_print_int(&bb);
-    bignum_from_int(&bb, 4294967295);
-    bignum_print_int(&bb);
-    bignum_inc(&bb);
-    bignum_print_int(&bb);
-    bignum_free(&bb);
     bignum bn;
     bignum bn2;
     bignum_init(&bn);
@@ -200,4 +197,5 @@ void test() {
     bignum_free(&bn2);
     test_bignum_lt();
     test_bignum_sub();
+    printf("Tests OK\n");
 }

@@ -57,6 +57,10 @@ void cover_all_bases() {
 }
 
 int main(int argc, char *argv[]) {
+    if (argc > 1 && 0 == strcmp(argv[1], "-e")) {
+        eyeball_tests();
+        test();
+    }
     if (argc > 1 && 0 == strcmp(argv[1], "-t")) {
         test();
         cover_all_bases();
