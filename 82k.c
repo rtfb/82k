@@ -4,13 +4,13 @@
 #include "tests.h"
 
 char* limited_precision_base_conv(long int number, size_t base) {
-    char base_digits[16] = {
+    static char base_digits[] = {
         '0', '1', '2', '3', '4', '5', '6', '7',
         '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'
     };
     static char buff[64] = "\0";
     int converted_number[64];
-    int next_digit, index=0;
+    int index = 0;
 
     // convert to the indicated base
     while (number != 0) {
