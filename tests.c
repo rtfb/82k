@@ -51,6 +51,22 @@ void test_bignum_sub() {
     assert(a.negative == false);
     assert(a.data[0] == 3);
     assert(a.size == 1);
+    //
+    bignum_from_int(&a, 256);
+    bignum_from_int(&b, 1);
+    bignum_sub(&a, &b);
+    assert(a.negative == false);
+    assert(a.data[0] == 255);
+    assert(a.size == 1);
+    //
+    bignum_from_int(&a, 65536);
+    bignum_from_int(&b, 1);
+    bignum_sub(&a, &b);
+    assert(a.negative == false);
+    assert(a.data[0] == 255);
+    assert(a.data[1] == 255);
+    assert(a.data[2] == 0);
+    assert(a.size == 2);
     bignum_free(&a);
     bignum_free(&b);
 }

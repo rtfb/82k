@@ -168,21 +168,19 @@ void bignum_sub(bignum* a, bignum *b) {
         a->negative = true;
         return;
     }
-    int subtrahend = 0;
-    int difference = 0;
-    for (int i = 0; i < b->size; ++i) {
-        subtrahend += b->data[i];
-        difference = a->data[i] - subtrahend;
+    int carry = 0;
+    for (int i = 0; i < a->size; ++i) {
+        int difference = a->data[i] - b->data[i] - carry;
         if (difference < 0) {
-            a->data[i] = 0;
-            subtrahend = difference;
+            if (i == a->size - 1) {
+                a->negative = true;
+            }
+            difference += 256;
+            carry = 1;
         } else {
-            a->data[i] = difference;
-            subtrahend = 0;
+            carry = 0;
         }
-    }
-    if (difference < 0) {
-        a->negative = true;
+        a->data[i] = difference;
     }
     while (a->size > 0 && a->data[a->size - 1] == 0) {
         --a->size;
