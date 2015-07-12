@@ -62,28 +62,39 @@ char* unlimited_precision_base_conv(bignum *number, size_t base) {
 }
 
 bool check_base(bignum *n, int base) {
-    // TODO
-    return false;
+    char *s = unlimited_precision_base_conv(n, base);
+    for (char *c = s; *c != 0; ++c) {
+        if (*c != '1' && *c != '0') {
+            return false;
+        }
+    }
+    free(s);
+    return true;
 }
 
 void cover_all_bases() {
     bignum n;
     bignum_init(&n);
     int bn_as_int = 1;
+    int base_cap = 4;
     bignum_from_int(&n, bn_as_int);
     while (bn_as_int < 100000) {
-        int base = 5;
-        for (; base > 2; ++base) {
+        int base = base_cap;
+        while (base > 2) {
             if (!check_base(&n, base)) {
                 break;
             }
+            --base;
+        }
+        if (bn_as_int % 1000 == 0) {
+            printf("%d\n", bn_as_int);
         }
         if (base == 2) {
-            printf("covers all bases from 2 to 5: ");
+            printf("covers all bases from 2 to %d: ", base_cap);
             bignum_print_int(&n);
         }
         bignum_inc(&n);
-        bn_as_int = bignum_to_int(&n);
+        ++bn_as_int;
     }
     bignum_free(&n);
 }
@@ -95,7 +106,53 @@ int main(int argc, char *argv[]) {
     }
     if (argc > 1 && 0 == strcmp(argv[1], "-t")) {
         test();
-        cover_all_bases();
     }
+    cover_all_bases();
     return 0;
 }
+
+/*
+82000 (base 2) = 10100000001010000
+82000 (base 3) = 11011111001
+82000 (base 4) = 110001100
+82000 (base 5) = 10111000
+82000 (base 6) = 1431344
+
+
+covers all bases from 2 to 4:
+1
+4
+81
+84
+85
+256
+273
+324
+325
+336
+337
+1089
+1092
+1093
+20496
+20497
+20736
+20737
+20740
+65620
+65856
+65857
+81921
+81984
+81985
+82000
+86032
+86277
+86292
+86293
+86356
+
+real    15m11.751s
+user    14m48.010s
+sys     0m0.440s
+*/
