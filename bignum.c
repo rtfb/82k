@@ -204,20 +204,18 @@ void bignum_mul_int(bignum *a, unsigned int b) {
     bignum_free(&tmp);
 }
 
-bool bignum_lt(bignum *a, bignum *b) {
+bool bignum_lte(bignum *a, bignum *b) {
     if (a->size < b->size) {
         return true;
     } else if (a->size > b->size) {
         return false;
     }
     for (int i = a->size - 1; i >= 0; --i) {
-        if (a->data[i] < b->data[i]) {
-            return true;
-        } else if (a->data[i] > b->data[i]) {
+        if (a->data[i] > b->data[i]) {
             return false;
         }
     }
-    return false;
+    return true;
 }
 
 // remainder is optional
@@ -230,7 +228,7 @@ bool bignum_lt(bignum *a, bignum *b) {
 void bignum_div_mod(bignum *a, bignum *b, bignum *remainder) {
     bignum result;
     bignum_init(&result);
-    while (bignum_lt(b, a)) {
+    while (bignum_lte(b, a)) {
         bignum_inc(&result);
         bignum_sub(a, b);
     }

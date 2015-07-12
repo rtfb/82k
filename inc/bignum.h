@@ -29,7 +29,7 @@ void bignum_inc(bignum *n);
 void bignum_add(bignum *a, bignum *b);
 void bignum_sub(bignum* a, bignum *b);
 void bignum_mul_int(bignum *a, unsigned int b);
-bool bignum_lt(bignum *a, bignum *b);
+bool bignum_lte(bignum *a, bignum *b);
 void bignum_div_mod(bignum *a, bignum *b, bignum *remainder);
 void bignum_div(bignum *a, bignum *b);
 void bignum_mod(bignum *a, bignum *b);

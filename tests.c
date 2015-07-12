@@ -2,25 +2,20 @@
 
 #include "bignum.h"
 
-void test_bignum_lt() {
+void test_bignum_lte() {
     bignum a, b;
     bignum_init(&a);
     bignum_init(&b);
-    bignum_from_int(&a, 17);
-    bignum_from_int(&b, 42000);
-    assert(bignum_lt(&a, &b) == true);
-    bignum_from_int(&a, 17324);
-    bignum_from_int(&b, 17324);
-    assert(bignum_lt(&a, &b) == false);
-    bignum_from_int(&a, 17323);
-    bignum_from_int(&b, 17324);
-    assert(bignum_lt(&a, &b) == true);
-    bignum_from_int(&a, 23);
-    bignum_from_int(&b, 17324);
-    assert(bignum_lt(&a, &b) == true);
-    bignum_from_int(&a, 17324);
-    bignum_from_int(&b, 23);
-    assert(bignum_lt(&a, &b) == false);
+    bignum_from_int(&a, 0);
+    bignum_from_int(&b, 0);
+    assert(bignum_lte(&a, &b) == true);
+    bignum_from_int(&b, 1);
+    assert(bignum_lte(&a, &b) == true);
+    bignum_from_int(&a, 2);
+    bignum_from_int(&b, 2);
+    assert(bignum_lte(&a, &b) == true);
+    bignum_from_int(&a, 3);
+    assert(bignum_lte(&a, &b) == false);
     bignum_free(&a);
     bignum_free(&b);
 }
@@ -132,6 +127,19 @@ void eyeball_tests() {
     bignum_free(&bb);
 }
 
+void test_bignum_div_mod() {
+    bignum n, b;
+    bignum_init(&n);
+    bignum_init(&b);
+    bignum_from_int(&n, 256);
+    bignum_from_int(&b, 2);
+    bignum_div_mod(&n, &b, NULL);
+    assert(n.data[0] == 128);
+    assert(n.size == 1);
+    bignum_free(&n);
+    bignum_free(&b);
+}
+
 void test() {
     bignum n;
     bignum_init(&n);
@@ -211,7 +219,8 @@ void test() {
     assert(bn2.data[1] == 4);
     bignum_free(&bn);
     bignum_free(&bn2);
-    test_bignum_lt();
+    test_bignum_lte();
     test_bignum_sub();
+    test_bignum_div_mod();
     printf("Tests OK\n");
 }
