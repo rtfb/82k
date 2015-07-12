@@ -140,6 +140,42 @@ void test_bignum_div_mod() {
     bignum_free(&b);
 }
 
+void test_bignum_div_mod_int() {
+    bignum n;
+    bignum_init(&n);
+    bignum_from_int(&n, 256);
+    bignum_div_mod_int(&n, 2, NULL);
+    assert(n.data[0] == 128);
+    assert(n.size == 1);
+    bignum_from_int(&n, 8);
+    bignum_div_mod_int(&n, 2, NULL);
+    assert(n.data[0] == 4);
+    bignum_div_mod_int(&n, 2, NULL);
+    assert(n.data[0] == 2);
+    bignum_div_mod_int(&n, 2, NULL);
+    assert(n.data[0] == 1);
+    bignum_div_mod_int(&n, 2, NULL);
+    assert(n.data[0] == 0);
+    bignum_from_int(&n, 82000);
+    int remainder = 0;
+    bignum_div_mod_int(&n, 2, &remainder);
+    assert(bignum_to_int(&n) == 41000);
+    bignum_free(&n);
+}
+
+void test_bignum_is_zero() {
+    bignum n;
+    bignum_init(&n);
+    assert(bignum_is_zero(&n) == true);
+    bignum_from_int(&n, 1);
+    assert(bignum_is_zero(&n) == false);
+    bignum_from_int(&n, 256);
+    assert(bignum_is_zero(&n) == false);
+    bignum_from_int(&n, 82000);
+    assert(bignum_is_zero(&n) == false);
+    bignum_free(&n);
+}
+
 void test() {
     bignum n;
     bignum_init(&n);
@@ -222,5 +258,7 @@ void test() {
     test_bignum_lte();
     test_bignum_sub();
     test_bignum_div_mod();
+    test_bignum_div_mod_int();
+    test_bignum_is_zero();
     printf("Tests OK\n");
 }

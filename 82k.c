@@ -1,4 +1,5 @@
 #include <string.h>
+#include <malloc.h>
 
 #include "bignum.h"
 #include "tests.h"
@@ -26,6 +27,37 @@ char* limited_precision_base_conv(long int number, size_t base) {
         buff[i] = base_digits[converted_number[index]];
     }
     buff[i] = '\0';
+    return buff;
+}
+
+char* unlimited_precision_base_conv(bignum *number, size_t base) {
+    static char base_digits[] = {
+        '0', '1', '2', '3', '4', '5', '6', '7',
+        '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'
+    };
+    bignum work;
+    bignum_init(&work);
+    bignum_copy(&work, number);
+    // allocate enough to print binary:
+    char *buff = malloc((work.size * 8 + 1) * sizeof(char));
+    int *converted_number = malloc((work.size * 8) * sizeof(int));
+    int digit = 0;
+    // convert to the indicated base
+    while (!bignum_is_zero(&work)) {
+        bignum_div_mod_int(&work, base, &(converted_number[digit]));
+        ++digit;
+    }
+    // now print the result in reverse order
+    --digit;  // back up to last entry in the array
+    int i = 0;
+    while (digit >= 0) {
+        buff[i] = base_digits[converted_number[digit]];
+        --digit;
+        ++i;
+    }
+    buff[i] = '\0';
+    bignum_free(&work);
+    free(converted_number);
     return buff;
 }
 

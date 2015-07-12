@@ -40,6 +40,10 @@ void bignum_copy(bignum *dest, bignum *src) {
     memcpy(dest->data, src->data, src->cap);
 }
 
+bool bignum_is_zero(bignum *n) {
+    return n->size == 0 || (n->size == 1 && n->data[0] == 0);
+}
+
 void bignum_dump(bignum *n) {
     printf("{%zu (%zu): [", n->size, n->cap);
     if (n->size == 0) {
@@ -216,6 +220,22 @@ bool bignum_lte(bignum *a, bignum *b) {
         }
     }
     return true;
+}
+
+void bignum_div_mod_int(bignum *a, int b, int *remainder) {
+    bignum bb;
+    bignum_init(&bb);
+    bignum_from_int(&bb, b);
+    if (!remainder) {
+        bignum_div_mod(a, &bb, NULL);
+    } else {
+        bignum rr;
+        bignum_init(&rr);
+        bignum_div_mod(a, &bb, &rr);
+        *remainder = bignum_to_int(&rr);
+        bignum_free(&rr);
+    }
+    bignum_free(&bb);
 }
 
 // remainder is optional
