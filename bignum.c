@@ -11,9 +11,6 @@ void bignum_init_cap(bignum *n, size_t cap) {
     n->size = 0;
     n->cap = cap;
     n->negative = false;
-    for (int i = 0; i < cap; ++i) {
-        n->data[i] = 0;
-    }
 }
 
 void bignum_init(bignum *n) {
