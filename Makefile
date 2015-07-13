@@ -1,6 +1,6 @@
 INCDIR=inc
 CC=gcc
-CFLAGS=-I$(INCDIR) -std=c99 -ggdb
+CFLAGS=-I$(INCDIR) -std=c99 -ggdb -O2 -pg
 
 OBJDIR=obj
 
