@@ -219,41 +219,50 @@ bool bignum_lte(bignum *a, bignum *b) {
     return true;
 }
 
+// Algorithm taken from:
+// http://stackoverflow.com/questions/10522379/bignum-division-with-an-unsigned-8-bit-integer-c
 void bignum_div_mod_int(bignum *a, int b, int *remainder) {
-    bignum bb;
-    bignum_init(&bb);
-    bignum_from_int(&bb, b);
-    if (!remainder) {
-        bignum_div_mod(a, &bb, NULL);
-    } else {
-        bignum rr;
-        bignum_init(&rr);
-        bignum_div_mod(a, &bb, &rr);
-        *remainder = bignum_to_int(&rr);
-        bignum_free(&rr);
+    int i = a->size;
+    unsigned int temp = 0;
+    while (i > 0) {
+        --i;
+        temp <<= 8;
+        temp |= a->data[i];
+        a->data[i] = temp / b;
+        temp -= a->data[i] * b;
     }
-    bignum_free(&bb);
+    if (remainder) {
+        *remainder = temp;
+    }
+    while (a->size > 0 && a->data[a->size - 1] == 0) {
+        --a->size;
+    }
+    if (a->size == 0) {
+        a->size = 1;
+    }
 }
 
 // remainder is optional
-// 7 / 2
-// 0;
-// while (2 < 7)
-//   1; 5
-//   2; 3
-//   3; 1
 void bignum_div_mod(bignum *a, bignum *b, bignum *remainder) {
-    bignum result;
-    bignum_init(&result);
-    while (bignum_lte(b, a)) {
-        bignum_inc(&result);
-        bignum_sub(a, b);
+    int i = a->size;
+    unsigned int temp = 0;
+    int bb = bignum_to_int(b);
+    while (i > 0) {
+        --i;
+        temp <<= 8;
+        temp |= a->data[i];
+        a->data[i] = temp / bb;
+        temp -= a->data[i] * bb;
     }
     if (remainder) {
-        bignum_copy(remainder, a);
+        bignum_from_int(remainder, temp);
     }
-    bignum_copy(a, &result);
-    bignum_free(&result);
+    while (a->size > 0 && a->data[a->size - 1] == 0) {
+        --a->size;
+    }
+    if (a->size == 0) {
+        a->size = 1;
+    }
 }
 
 // a /= b
