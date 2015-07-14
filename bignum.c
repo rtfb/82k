@@ -293,6 +293,7 @@ void bignum_from_bignum(bignum *n, bignum* s, size_t base) {
             bignum_mul_int(&multiplier, base);
         }
     }
+    bignum_free(&multiplier);
 }
 
 /*
