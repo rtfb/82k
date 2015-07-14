@@ -98,6 +98,39 @@ void cover_all_bases(int base_cap) {
     bignum_free(&n);
 }
 
+void search() {
+    bignum n5;
+    bignum n;
+    bignum_init(&n5);
+    bignum_init(&n);
+    int bn_as_int = 1;
+    int base_cap = 5;
+    bignum_from_int(&n5, 1);
+    //while (bn_as_int < 1000*1000*1000) {
+    while (bn_as_int < 10*1000) {
+        int base = base_cap;
+        while (base > 2) {
+            bignum_from_bignum(&n, &n5, 5);
+            if (!check_base(&n, base)) {
+                break;
+            }
+            --base;
+        }
+        if (base == 2) {
+            printf("covers all bases from 2 to %d: ", base_cap);
+            bignum tmp;
+            bignum_init(&tmp);
+            bignum_from_bignum(&tmp, &n5, 5);
+            bignum_print_int(&tmp);
+            bignum_free(&tmp);
+        }
+        bignum_inc(&n5);
+        bn_as_int = bignum_to_int(&n5);
+    }
+    bignum_free(&n5);
+    bignum_free(&n);
+}
+
 int main(int argc, char *argv[]) {
     if (argc > 1 && 0 == strcmp(argv[1], "-e")) {
         eyeball_tests();
@@ -108,7 +141,8 @@ int main(int argc, char *argv[]) {
         test();
         return 0;
     }
-    cover_all_bases(5);
+    //cover_all_bases(5);
+    search();
     return 0;
 }
 
