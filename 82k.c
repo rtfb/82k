@@ -72,11 +72,10 @@ bool check_base(bignum *n, int base) {
     return true;
 }
 
-void cover_all_bases() {
+void cover_all_bases(int base_cap) {
     bignum n;
     bignum_init(&n);
     int bn_as_int = 1;
-    int base_cap = 4;
     bignum_from_int(&n, bn_as_int);
     while (bn_as_int < 100000) {
         int base = base_cap;
@@ -109,7 +108,7 @@ int main(int argc, char *argv[]) {
         test();
         return 0;
     }
-    cover_all_bases();
+    cover_all_bases(5);
     return 0;
 }
 
