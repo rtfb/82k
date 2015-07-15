@@ -176,6 +176,20 @@ void test_bignum_is_zero() {
     bignum_free(&n);
 }
 
+void test_bignum_from_bignum() {
+    bignum bn;
+    bignum bn2;
+    bignum_init(&bn);
+    bignum_init(&bn2);
+    bignum_from_int(&bn, 1047);
+    bignum_from_bignum(&bn2, &bn, 2);
+    assert(bn2.size == 2);
+    assert(bn2.data[0] == 23);
+    assert(bn2.data[1] == 4);
+    bignum_free(&bn);
+    bignum_free(&bn2);
+}
+
 void test() {
     bignum n;
     bignum_init(&n);
@@ -244,17 +258,7 @@ void test() {
     assert(x.data[1] == 0);
     bignum_free(&x);
     test_bignum_from_string_binary();
-    bignum bn;
-    bignum bn2;
-    bignum_init(&bn);
-    bignum_init(&bn2);
-    bignum_from_int(&bn, 1047);
-    bignum_from_bignum(&bn2, &bn, 2);
-    assert(bn2.size == 2);
-    assert(bn2.data[0] == 23);
-    assert(bn2.data[1] == 4);
-    bignum_free(&bn);
-    bignum_free(&bn2);
+    test_bignum_from_bignum();
     test_bignum_lte();
     test_bignum_sub();
     test_bignum_div_mod();
