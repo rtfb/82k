@@ -110,7 +110,7 @@ void search() {
     while (bn_as_int < 10*1000) {
         int base = base_cap;
         while (base > 2) {
-            bignum_from_bignum(&n, &n5, 5);
+            bignum_base_convert(&n, &n5, 5);
             if (!check_base(&n, base)) {
                 break;
             }
@@ -120,7 +120,7 @@ void search() {
             printf("covers all bases from 2 to %d: ", base_cap);
             bignum tmp;
             bignum_init(&tmp);
-            bignum_from_bignum(&tmp, &n5, 5);
+            bignum_base_convert(&tmp, &n5, 5);
             bignum_print_int(&tmp);
             bignum_free(&tmp);
         }

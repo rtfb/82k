@@ -182,7 +182,7 @@ void test_bignum_from_bignum() {
     bignum_init(&bn);
     bignum_init(&bn2);
     bignum_from_int(&bn, 1047);
-    bignum_from_bignum(&bn2, &bn, 2);
+    bignum_base_convert(&bn2, &bn, 2);
     assert(bn2.size == 2);
     assert(bn2.data[0] == 23);
     assert(bn2.data[1] == 4);

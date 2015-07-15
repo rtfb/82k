@@ -280,7 +280,7 @@ void bignum_mod(bignum *a, bignum *b) {
 }
 
 // assign n from s, treat s as being in base 'base'
-void bignum_from_bignum(bignum *n, bignum* s, size_t base) {
+void bignum_base_convert(bignum *n, bignum* s, size_t base) {
     bignum multiplier;
     bignum_from_int(n, 0);
     bignum_init(&multiplier);
