@@ -101,8 +101,10 @@ void cover_all_bases(int base_cap) {
 void search() {
     bignum n5;
     bignum n;
+    bignum tmp;
     bignum_init(&n5);
     bignum_init(&n);
+    bignum_init(&tmp);
     int bn_as_int = 1;
     int base_cap = 5;
     bignum_from_int(&n5, 1);
@@ -117,18 +119,17 @@ void search() {
             --base;
         }
         if (base == 2) {
-            printf("covers all bases from 2 to %d: ", base_cap);
-            bignum tmp;
-            bignum_init(&tmp);
             bignum_base_convert(&tmp, &n5, 5);
+            printf("covers all bases from 2 to %d: ", base_cap);
             bignum_print_int(&tmp);
-            bignum_free(&tmp);
         }
         bignum_inc(&n5);
-        bn_as_int = bignum_to_int(&n5);
+        bignum_base_convert(&tmp, &n5, 5);
+        bn_as_int = bignum_to_int(&tmp);
     }
     bignum_free(&n5);
     bignum_free(&n);
+    bignum_free(&tmp);
 }
 
 int main(int argc, char *argv[]) {
