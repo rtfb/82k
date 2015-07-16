@@ -62,13 +62,31 @@ char* unlimited_precision_base_conv(bignum *number, size_t base) {
 }
 
 bool check_base(bignum *n, int base) {
-    char *s = unlimited_precision_base_conv(n, base);
-    for (char *c = s; *c != 0; ++c) {
-        if (*c != '1' && *c != '0') {
+    bignum work;
+    bignum_init(&work);
+    bignum_copy(&work, n);
+    while (true) {
+        while (work.size > 0 && work.data[work.size - 1] == 0) {
+            --work.size;
+        }
+        int i = work.size;
+        if (i == 0 || (i == 1 && work.data[0] == 0)) {
+            break;
+        }
+        int converted_digit = 0;
+        while (i > 0) {
+            --i;
+            converted_digit <<= 8;
+            converted_digit |= work.data[i];
+            work.data[i] = converted_digit / base;
+            converted_digit -= work.data[i] * base;
+        }
+        if (converted_digit > 1) {
+            bignum_free(&work);
             return false;
         }
     }
-    free(s);
+    bignum_free(&work);
     return true;
 }
 
