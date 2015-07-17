@@ -206,6 +206,17 @@ void test_bignum_from_bignum() {
     bignum_free(&bn2);
 }
 
+void test_bignum_mul_int() {
+    bignum x;
+    bignum_init(&x);
+    bignum_from_int(&x, 17);
+    bignum_mul_int(&x, 3);
+    assert(x.size == 1);
+    assert(x.data[0] == 51);
+    assert(x.data[1] == 0);
+    bignum_free(&x);
+}
+
 void test() {
     bignum n;
     bignum_init(&n);
@@ -265,14 +276,7 @@ void test() {
     assert(a.data[2] == 3);
     bignum_free(&a);
     bignum_free(&b);
-    bignum x;
-    bignum_init(&x);
-    bignum_from_int(&x, 17);
-    bignum_mul_int(&x, 3);
-    assert(x.size == 1);
-    assert(x.data[0] == 51);
-    assert(x.data[1] == 0);
-    bignum_free(&x);
+    test_bignum_mul_int();
     test_bignum_from_string_binary();
     test_bignum_from_bignum();
     test_bignum_lte();
