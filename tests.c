@@ -214,6 +214,29 @@ void test_bignum_mul_int() {
     assert(x.size == 1);
     assert(x.data[0] == 51);
     assert(x.data[1] == 0);
+    //
+    bignum_from_int(&x, 1);
+    for (int i = 0; i < 16; ++i) {
+        bignum_mul_int(&x, 5);
+    }
+    assert(x.size == 5);
+    assert(x.data[0] == 0xc1);
+    assert(x.data[1] == 0x6f);
+    assert(x.data[2] == 0xf2);
+    assert(x.data[3] == 0x86);
+    assert(x.data[4] == 0x23);
+    assert(x.data[5] == 0);
+    //
+    bignum_from_int(&x, 1220703125); // <<<< THAT!
+    bignum_mul_int(&x, 5);
+    bignum_dump(&x);
+    assert(x.size == 5);
+    assert(x.data[0] == 0xe9);
+    assert(x.data[1] == 0x41);
+    assert(x.data[2] == 0xcc);
+    assert(x.data[3] == 0x6b);
+    assert(x.data[4] == 0x1);
+    assert(x.data[5] == 0);
     bignum_free(&x);
 }
 
