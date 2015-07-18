@@ -50,7 +50,11 @@ void bignum_dump(bignum *n) {
     for (int i = 0; i < n->size - 1; ++i) {
         printf("%d, ", n->data[i]);
     }
-    printf("%d]}\n", n->data[n->size - 1]);
+    printf("%d], [", n->data[n->size - 1]);
+    for (int i = 0; i < n->size - 1; ++i) {
+        printf("%x, ", n->data[i]);
+    }
+    printf("%x]}\n", n->data[n->size - 1]);
 }
 
 void bignum_bprint(bignum *n) {
