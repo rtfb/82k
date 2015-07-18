@@ -240,6 +240,34 @@ void test_bignum_mul_int() {
     bignum_free(&x);
 }
 
+void test_bignum_add() {
+    bignum a, b;
+    bignum_init(&a);
+    bignum_init(&b);
+    bignum_from_int(&a, 82);
+    bignum_from_int(&b, 250);
+    bignum_add(&a, &b);
+    assert(a.size == 2);
+    assert(a.data[0] == 76);
+    assert(a.data[1] == 1);
+    bignum_from_int(&a, 82000);
+    bignum_from_int(&b, 150000);
+    bignum_add(&a, &b);
+    assert(a.size == 3);
+    assert(a.data[0] == 64);
+    assert(a.data[1] == 138);
+    assert(a.data[2] == 3);
+    bignum_from_int(&a, 15);
+    bignum_from_int(&b, 232000);
+    bignum_add(&a, &b);
+    assert(a.size == 3);
+    assert(a.data[0] == 79);
+    assert(a.data[1] == 138);
+    assert(a.data[2] == 3);
+    bignum_free(&a);
+    bignum_free(&b);
+}
+
 void test() {
     bignum n;
     bignum_init(&n);
@@ -274,31 +302,7 @@ void test() {
     assert(small.size == 2);
     assert(small.cap == 2);
     bignum_free(&small);
-    bignum a, b;
-    bignum_init(&a);
-    bignum_init(&b);
-    bignum_from_int(&a, 82);
-    bignum_from_int(&b, 250);
-    bignum_add(&a, &b);
-    assert(a.size == 2);
-    assert(a.data[0] == 76);
-    assert(a.data[1] == 1);
-    bignum_from_int(&a, 82000);
-    bignum_from_int(&b, 150000);
-    bignum_add(&a, &b);
-    assert(a.size == 3);
-    assert(a.data[0] == 64);
-    assert(a.data[1] == 138);
-    assert(a.data[2] == 3);
-    bignum_from_int(&a, 15);
-    bignum_from_int(&b, 232000);
-    bignum_add(&a, &b);
-    assert(a.size == 3);
-    assert(a.data[0] == 79);
-    assert(a.data[1] == 138);
-    assert(a.data[2] == 3);
-    bignum_free(&a);
-    bignum_free(&b);
+    test_bignum_add();
     test_bignum_mul_int();
     test_bignum_from_string_binary();
     test_bignum_from_bignum();
