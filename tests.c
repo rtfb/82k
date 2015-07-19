@@ -227,9 +227,8 @@ void test_bignum_mul_int() {
     assert(x.data[4] == 0x23);
     assert(x.data[5] == 0);
     //
-    bignum_from_int(&x, 1220703125); // <<<< THAT!
+    bignum_from_int(&x, 1220703125);
     bignum_mul_int(&x, 5);
-    bignum_dump(&x);
     assert(x.size == 5);
     assert(x.data[0] == 0xe9);
     assert(x.data[1] == 0x41);
