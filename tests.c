@@ -264,6 +264,13 @@ void test_bignum_add() {
     assert(a.data[0] == 79);
     assert(a.data[1] == 138);
     assert(a.data[2] == 3);
+    bignum_from_int(&a, 120);
+    bignum_from_int(&b, 140);
+    a.data[1] = 7; // make sure there's garbage after data
+    bignum_add(&a, &b);
+    assert(a.size == 2);
+    assert(a.data[0] == 4);
+    assert(a.data[1] == 1);
     bignum_free(&a);
     bignum_free(&b);
 }
