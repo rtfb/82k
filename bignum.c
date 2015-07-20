@@ -152,14 +152,21 @@ void bignum_add(bignum *a, bignum *b) {
         if (i >= a->cap) {
             bignum_resize(a);
         }
-        this = a->data[i] + b->data[i] + carry;
+        this = b->data[i] + carry;
+        if (i < a->size) { // avoid summing garbage
+            this += a->data[i];
+        }
         carry = this > 255;
         if (carry) {
             this -= 256;
         }
         a->data[i] = this;
         ++i;
-    } while (carry > 0 || i < b->size);
+    } while (i < b->size);
+    if (carry) {
+        a->data[i] = 1;
+        ++a->size;
+    }
     if (i > a->size) {
         a->size = i;
     }
