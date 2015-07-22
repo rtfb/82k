@@ -270,6 +270,13 @@ void test_bignum_add() {
     assert(a.size == 2);
     assert(a.data[0] == 4);
     assert(a.data[1] == 1);
+    //
+    bignum_from_int(&a, 500);
+    bignum_from_int(&b, 125);
+    bignum_add(&a, &b);
+    assert(a.size == 2);
+    assert(a.data[0] == 113);
+    assert(a.data[1] == 2);
     bignum_free(&a);
     bignum_free(&b);
 }

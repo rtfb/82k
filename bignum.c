@@ -163,12 +163,17 @@ void bignum_add(bignum *a, bignum *b) {
         a->data[i] = this;
         ++i;
     } while (i < b->size);
+    while (i < a->size && carry) {
+        ++a->data[i];
+        carry = a->data[i] == 0;
+        ++i;
+    }
     if (carry) {
         a->data[i] = 1;
-        ++a->size;
+        ++a->size; // XXX: resize?
     }
     if (i > a->size) {
-        a->size = i;
+        a->size = i; // XXX: resize?
     }
 }
 
