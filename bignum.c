@@ -47,14 +47,16 @@ void bignum_dump(bignum *n) {
         printf("]}\n");
         return;
     }
-    for (int i = 0; i < n->size - 1; ++i) {
+    size_t end = n->size - 1;
+    //end = n->cap - 1;
+    for (int i = 0; i < end; ++i) {
         printf("%d, ", n->data[i]);
     }
-    printf("%d], [", n->data[n->size - 1]);
-    for (int i = 0; i < n->size - 1; ++i) {
+    printf("%d], [", n->data[end]);
+    for (int i = 0; i < end; ++i) {
         printf("%x, ", n->data[i]);
     }
-    printf("%x]}\n", n->data[n->size - 1]);
+    printf("%x]}\n", n->data[end]);
 }
 
 void bignum_bprint(bignum *n) {
