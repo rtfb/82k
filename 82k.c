@@ -127,9 +127,9 @@ void search() {
     bignum_from_int(&n5, 1);
     int last_size = n5.size;
     while (n5.size < 4) {
+        bignum_base_convert(&n, &n5, 5);
         int base = base_cap;
         while (base > 2) {
-            bignum_base_convert(&n, &n5, 5);
             if (!check_base(&n, base)) {
                 break;
             }
