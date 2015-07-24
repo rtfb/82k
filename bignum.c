@@ -210,7 +210,7 @@ void bignum_sub(bignum* a, bignum *b) {
 }
 
 // a *= b
-void bignum_mul_int(bignum *a, unsigned int b) {
+void bignum_mul_int_silly_loop(bignum *a, unsigned int b) {
     bignum tmp;
     bignum_init(&tmp);
     bignum_copy(&tmp, a);
@@ -220,6 +220,38 @@ void bignum_mul_int(bignum *a, unsigned int b) {
         bignum_add(a, &tmp);
         --b;
     }
+    bignum_free(&tmp);
+}
+
+// a *= b
+void bignum_mul_int(bignum *a, unsigned int b) {
+    bignum tmp;
+    bignum_init(&tmp);
+    unsigned char b_bytes[] = {
+         b & 0x000000ff,
+        (b & 0x0000ff00) >> 8,
+        (b & 0x00ff0000) >> 16,
+        (b & 0xff000000) >> 24,
+    };
+    int b_size = 3;
+    while (b_size > 1 && b_bytes[b_size] == 0) --b_size;
+    for (int bi = 0; bi < b_size; ++bi) {
+        int carry = 0;
+        for (int ai = 0; ai < a->size; ++ai) {
+            int prod = carry + a->data[ai] * b_bytes[bi];
+            carry = prod / 256;
+            tmp.data[ai + bi] = prod % 256;
+        }
+        tmp.data[bi + a->size] = carry;
+    }
+    tmp.size = a->size + b_size;
+    while (tmp.size > 0 && tmp.data[tmp.size - 1] == 0) {
+        --tmp.size;
+    }
+    if (tmp.size == 0) {
+        tmp.size = 1;
+    }
+    bignum_copy(a, &tmp);
     bignum_free(&tmp);
 }
 
