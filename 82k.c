@@ -123,11 +123,10 @@ void search() {
     bignum_init(&n5);
     bignum_init(&n);
     bignum_init(&tmp);
-    int bn_as_int = 1;
     int base_cap = 5;
     bignum_from_int(&n5, 1);
-    //while (bn_as_int < 1000*1000*1000) {
-    while (bn_as_int < 10*1000) {
+    int last_size = n5.size;
+    while (n5.size < 4) {
         int base = base_cap;
         while (base > 2) {
             bignum_base_convert(&n, &n5, 5);
@@ -142,8 +141,16 @@ void search() {
             bignum_print_int(&tmp);
         }
         bignum_inc(&n5);
-        bignum_base_convert(&tmp, &n5, 5);
-        bn_as_int = bignum_to_int(&tmp);
+        if (n5.size > last_size) {
+            char* a = unlimited_precision_base_conv(&n5, 5);
+            printf("b5: %s\n", a);
+            free(a);
+            bignum_base_convert(&tmp, &n5, 5);
+            char* b = unlimited_precision_base_conv(&tmp, 10);
+            printf("b10: %s\n", b);
+            free(b);
+            last_size = n5.size;
+        }
     }
     bignum_free(&n5);
     bignum_free(&n);
