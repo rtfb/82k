@@ -1,5 +1,5 @@
 #include <string.h>
-#include <malloc.h>
+#include <stdlib.h>
 
 #include "bignum.h"
 #include "tests.h"
