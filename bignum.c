@@ -6,6 +6,9 @@
 
 #include "bignum.h"
 
+static size_t mul_lut_size = 0;
+static bignum *mul_lut = NULL;
+
 void bignum_init_cap(bignum *n, size_t cap) {
     n->data = malloc(cap * sizeof(unsigned char));
     n->size = 0;
@@ -329,21 +332,41 @@ void bignum_mod(bignum *a, bignum *b) {
     bignum_free(&tmp);
 }
 
-// assign n from s, treat s as being in base 'base'
-void bignum_base_convert(bignum *n, bignum* s, size_t base) {
+void bignum_init_base_convert(size_t size, int base) {
     bignum multiplier;
-    bignum_from_int(n, 0);
     bignum_init(&multiplier);
     bignum_from_int(&multiplier, 1);
+    mul_lut = malloc(size * sizeof(bignum));
+    mul_lut_size = size;
+    for (int i = 0; i < size; ++i) {
+        bignum_init(&mul_lut[i]);
+        bignum_copy(&mul_lut[i], &multiplier);
+        bignum_mul_int(&multiplier, base);
+    }
+    bignum_free(&multiplier);
+}
+
+void bignum_free_base_convert_lut() {
+    for (int i = 0; i < mul_lut_size; ++i) {
+        bignum_free(&mul_lut[i]);
+    }
+    free(mul_lut);
+    mul_lut = NULL;
+    mul_lut_size = 0;
+}
+
+// assign n from s, treat s as being in base 'base'
+void bignum_base_convert(bignum *n, bignum* s, size_t base) {
+    bignum_from_int(n, 0);
+    int m = 0;
     for (int i = 0; i < s->size; ++i) {
         for (unsigned char mask = 1; mask != 0; mask <<= 1) {
             if (s->data[i] & mask) {
-                bignum_add(n, &multiplier);
+                bignum_add(n, &mul_lut[m]);
             }
-            bignum_mul_int(&multiplier, base);
+            ++m;
         }
     }
-    bignum_free(&multiplier);
 }
 
 /*

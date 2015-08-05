@@ -34,6 +34,8 @@ void bignum_div_mod(bignum *a, bignum *b, bignum *remainder);
 void bignum_div_mod_int(bignum *a, int b, int *remainder);
 void bignum_div(bignum *a, bignum *b);
 void bignum_mod(bignum *a, bignum *b);
+void bignum_init_base_convert(size_t n, int base);
+void bignum_free_base_convert_lut();
 void bignum_base_convert(bignum *n, bignum* s, size_t base);
 void bignum_from_string_binary(bignum *n, char const* s, size_t base);
 char* limited_precision_base_conv(long int number, size_t base);

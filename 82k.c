@@ -126,6 +126,7 @@ void search() {
     int base_cap = 5;
     bignum_from_int(&n5, 1);
     int last_size = n5.size;
+    bignum_init_base_convert(40, 5);
     while (n5.size < 4) {
         bignum_base_convert(&n, &n5, 5);
         int base = base_cap;
@@ -152,6 +153,7 @@ void search() {
             last_size = n5.size;
         }
     }
+    bignum_free_base_convert_lut();
     bignum_free(&n5);
     bignum_free(&n);
     bignum_free(&tmp);
