@@ -65,22 +65,9 @@ bool check_base(bignum *n, int base) {
     bignum work;
     bignum_init(&work);
     bignum_copy(&work, n);
-    while (true) {
-        while (work.size > 0 && work.data[work.size - 1] == 0) {
-            --work.size;
-        }
-        int i = work.size;
-        if (i == 0 || (i == 1 && work.data[0] == 0)) {
-            break;
-        }
-        int converted_digit = 0;
-        while (i > 0) {
-            --i;
-            converted_digit <<= 8;
-            converted_digit |= work.data[i];
-            work.data[i] = converted_digit / base;
-            converted_digit -= work.data[i] * base;
-        }
+    int converted_digit = 0;
+    while (!bignum_is_zero(&work)) {
+        bignum_div_mod_int(&work, base, &converted_digit);
         if (converted_digit > 1) {
             bignum_free(&work);
             return false;
@@ -160,6 +147,7 @@ void search() {
 }
 
 int main(int argc, char *argv[]) {
+    init_div_mod_int_lut();
     if (argc > 1 && 0 == strcmp(argv[1], "-e")) {
         eyeball_tests();
         test();
