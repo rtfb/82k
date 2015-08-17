@@ -147,7 +147,6 @@ void search() {
 }
 
 int main(int argc, char *argv[]) {
-    init_div_mod_int_lut();
     if (argc > 1 && 0 == strcmp(argv[1], "-e")) {
         eyeball_tests();
         test();
