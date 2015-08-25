@@ -356,7 +356,7 @@ void bignum_free_base_convert_lut() {
 }
 
 // assign n from s, treat s as being in base 'base'
-void bignum_base_convert(bignum *n, bignum* s, size_t base) {
+void bignum_base_convert(bignum *n, bignum* s) {
     bignum_from_int(n, 0);
     int m = 0;
     for (int i = 0; i < s->size; ++i) {

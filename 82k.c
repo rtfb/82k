@@ -115,7 +115,7 @@ void search() {
     int last_size = n5.size;
     bignum_init_base_convert(40, 5);
     while (n5.size < 4) {
-        bignum_base_convert(&n, &n5, 5);
+        bignum_base_convert(&n, &n5);
         int base = base_cap;
         while (base > 2) {
             if (!check_base(&n, base)) {
@@ -124,7 +124,7 @@ void search() {
             --base;
         }
         if (base == 2) {
-            bignum_base_convert(&tmp, &n5, 5);
+            bignum_base_convert(&tmp, &n5);
             printf("covers all bases from 2 to %d: ", base_cap);
             bignum_print_int(&tmp);
         }
@@ -133,7 +133,7 @@ void search() {
             char* a = unlimited_precision_base_conv(&n5, 5);
             printf("b5: %s\n", a);
             free(a);
-            bignum_base_convert(&tmp, &n5, 5);
+            bignum_base_convert(&tmp, &n5);
             char* b = unlimited_precision_base_conv(&tmp, 10);
             printf("b10: %s\n", b);
             free(b);

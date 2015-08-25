@@ -183,7 +183,7 @@ void test_bignum_from_bignum() {
     bignum_init(&bn2);
     bignum_init_base_convert(40, 2);
     bignum_from_int(&bn, 1047);
-    bignum_base_convert(&bn2, &bn, 2);
+    bignum_base_convert(&bn2, &bn);
     assert(bn2.size == 2);
     assert(bn2.data[0] == 23);
     assert(bn2.data[1] == 4);
@@ -191,19 +191,19 @@ void test_bignum_from_bignum() {
     //
     bignum_init_base_convert(40, 5);
     bignum_from_int(&bn, 1);
-    bignum_base_convert(&bn2, &bn, 5);
+    bignum_base_convert(&bn2, &bn);
     assert(bn2.size == 1);
     assert(bn2.data[0] == 1);
     bignum_from_int(&bn, 2); // binary 10
-    bignum_base_convert(&bn2, &bn, 5);
+    bignum_base_convert(&bn2, &bn);
     assert(bn2.size == 1);
     assert(bn2.data[0] == 5);
     bignum_from_int(&bn, 3); // binary 11
-    bignum_base_convert(&bn2, &bn, 5);
+    bignum_base_convert(&bn2, &bn);
     assert(bn2.size == 1);
     assert(bn2.data[0] == 6);
     bignum_from_int(&bn, 5); // binary 101
-    bignum_base_convert(&bn2, &bn, 5);
+    bignum_base_convert(&bn2, &bn);
     assert(bn2.size == 1);
     assert(bn2.data[0] == 26);
     bignum_free(&bn);
