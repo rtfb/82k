@@ -1,12 +1,17 @@
 package main
 
 import (
+	"flag"
 	"fmt"
+	"log"
 	"math/big"
+	"os"
+	"runtime/pprof"
 )
 
 var (
-	mulLUT []big.Int
+	mulLUT     []big.Int
+	cpuprofile = flag.String("cpuprofile", "", "write cpu profile to file")
 )
 
 func initBaseConvert(size, base uint32) {
@@ -70,6 +75,15 @@ func search() {
 }
 
 func main() {
+	flag.Parse()
+	if *cpuprofile != "" {
+		f, err := os.Create(*cpuprofile)
+		if err != nil {
+			log.Fatal(err)
+		}
+		pprof.StartCPUProfile(f)
+		defer pprof.StopCPUProfile()
+	}
 	initBaseConvert(40, 5)
 	search()
 	//n := big.NewInt(0)
