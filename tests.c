@@ -160,6 +160,7 @@ void test_bignum_div_mod_int() {
     int remainder = 0;
     bignum_div_mod_int(&n, 2, &remainder);
     assert(bignum_to_int(&n) == 41000);
+    assert(remainder == 0);
     bignum_free(&n);
 }
 
