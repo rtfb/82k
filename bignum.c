@@ -272,17 +272,31 @@ bool bignum_lte(bignum *a, bignum *b) {
     return true;
 }
 
+#define LUTSZ 10000
+#define NDIVISORS 11
+unsigned int lut[NDIVISORS][LUTSZ][2];
+void init_div_mod_int_lut() {
+    for (int b = 2; b < NDIVISORS; ++b) {
+        for (unsigned int temp = 0; temp < LUTSZ; ++temp) {
+            lut[b][temp][0] = temp / b;
+            lut[b][temp][1] = lut[b][temp][0] * b;
+        }
+    }
+}
+
 // Algorithm taken from:
 // http://stackoverflow.com/questions/10522379/bignum-division-with-an-unsigned-8-bit-integer-c
 void bignum_div_mod_int(bignum *a, int b, int *remainder) {
     int i = a->size;
     unsigned int temp = 0;
+    assert(b < NDIVISORS);
     while (i > 0) {
         --i;
         temp <<= 8;
         temp |= a->data[i];
-        a->data[i] = temp / b;
-        temp -= a->data[i] * b;
+        assert(temp < LUTSZ);
+        a->data[i] = lut[b][temp][0];
+        temp -= lut[b][temp][1];
     }
     if (remainder) {
         *remainder = temp;

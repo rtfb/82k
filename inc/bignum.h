@@ -32,6 +32,7 @@ void bignum_mul_int(bignum *a, unsigned int b);
 bool bignum_lte(bignum *a, bignum *b);
 void bignum_div_mod(bignum *a, bignum *b, bignum *remainder);
 void bignum_div_mod_int(bignum *a, int b, int *remainder);
+void init_div_mod_int_lut();
 void bignum_div(bignum *a, bignum *b);
 void bignum_mod(bignum *a, bignum *b);
 void bignum_init_base_convert(size_t n, int base);
