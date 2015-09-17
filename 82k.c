@@ -77,32 +77,6 @@ bool check_base(bignum *n, int base) {
     return true;
 }
 
-void cover_all_bases(int base_cap) {
-    bignum n;
-    bignum_init(&n);
-    int bn_as_int = 1;
-    bignum_from_int(&n, bn_as_int);
-    while (bn_as_int < 100000) {
-        int base = base_cap;
-        while (base > 2) {
-            if (!check_base(&n, base)) {
-                break;
-            }
-            --base;
-        }
-        if (bn_as_int % 1000 == 0) {
-            printf("%d\n", bn_as_int);
-        }
-        if (base == 2) {
-            printf("covers all bases from 2 to %d: ", base_cap);
-            bignum_print_int(&n);
-        }
-        bignum_inc(&n);
-        ++bn_as_int;
-    }
-    bignum_free(&n);
-}
-
 void search() {
     bignum n5;
     bignum n;
@@ -157,7 +131,6 @@ int main(int argc, char *argv[]) {
         test();
         return 0;
     }
-    //cover_all_bases(5);
     search();
     return 0;
 }
