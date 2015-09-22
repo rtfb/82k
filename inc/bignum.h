@@ -1,8 +1,8 @@
 #ifndef BIGNUM_H__
 #define BIGNUM_H__
 
-#include <stdio.h> // this is for size_t. Should be a better one
 #include <stdint.h>
+#include <stddef.h>
 #include <stdbool.h>
 
 #define DEFAULT_CAPACITY 128
