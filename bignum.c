@@ -10,7 +10,7 @@ static size_t mul_lut_size = 0;
 static bignum *mul_lut = NULL;
 
 void bignum_init_cap(bignum *n, size_t cap) {
-    n->data = malloc(cap * sizeof(unsigned char));
+    n->data = malloc(cap * sizeof(uint8_t));
     n->size = 0;
     n->cap = cap;
     n->negative = false;
@@ -36,7 +36,7 @@ void bignum_copy(bignum *dest, bignum *src) {
     dest->cap = src->cap;
     dest->size = src->size;
     free(dest->data);
-    dest->data = malloc(src->cap * sizeof(unsigned char));
+    dest->data = malloc(src->cap * sizeof(uint8_t));
     memcpy(dest->data, src->data, src->cap);
 }
 
@@ -110,17 +110,17 @@ void bignum_print_int(bignum *n) {
     printf("%u\n", bignum_to_int(n));
 }
 
-void bignum_from_char(bignum *n, unsigned char s) {
+void bignum_from_char(bignum *n, uint8_t s) {
     n->data[0] = s;
     n->size = 1;
 }
 
 void bignum_from_int(bignum *n, int s) {
     assert(n->cap >= 4);
-    unsigned char b1 =  s & 0x000000ff;
-    unsigned char b2 = (s & 0x0000ff00) >> 8;
-    unsigned char b3 = (s & 0x00ff0000) >> 16;
-    unsigned char b4 = (s & 0xff000000) >> 24;
+    uint8_t b1 =  s & 0x000000ff;
+    uint8_t b2 = (s & 0x0000ff00) >> 8;
+    uint8_t b3 = (s & 0x00ff0000) >> 16;
+    uint8_t b4 = (s & 0xff000000) >> 24;
     n->data[0] = b1;
     n->data[1] = b2;
     n->data[2] = b3;
@@ -230,7 +230,7 @@ void bignum_mul_int_silly_loop(bignum *a, unsigned int b) {
 void bignum_mul_int(bignum *a, unsigned int b) {
     bignum tmp;
     bignum_init(&tmp);
-    unsigned char b_bytes[] = {
+    uint8_t b_bytes[] = {
          b & 0x000000ff,
         (b & 0x0000ff00) >> 8,
         (b & 0x00ff0000) >> 16,
@@ -374,7 +374,7 @@ void bignum_base_convert(bignum *n, bignum* s) {
     bignum_from_int(n, 0);
     int m = 0;
     for (int i = 0; i < s->size; ++i) {
-        for (unsigned char mask = 1; mask != 0; mask <<= 1) {
+        for (uint8_t mask = 1; mask != 0; mask <<= 1) {
             if (s->data[i] & mask) {
                 bignum_add(n, &mul_lut[m]);
             }
