@@ -84,7 +84,7 @@ void search() {
     bignum_init(&n5);
     bignum_init(&n);
     bignum_init(&tmp);
-    int base_cap = 5;
+    int base_cap = 4;
     bignum_from_int(&n5, 1);
     int last_size = n5.size;
     bignum_init_base_convert(40, 5);
@@ -99,7 +99,7 @@ void search() {
         }
         if (base == 2) {
             bignum_base_convert(&tmp, &n5);
-            printf("covers all bases from 2 to %d: ", base_cap);
+            printf("covers all bases from 2 to %d: ", base_cap + 1);
             bignum_print_int(&tmp);
         }
         bignum_inc(&n5);
