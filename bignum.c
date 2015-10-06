@@ -153,18 +153,16 @@ void bignum_add(bignum *a, bignum *b) {
     bool carry = false;
     int this = 0;
     int i = 0;
+    if (b->size >= a->cap) {
+        bignum_resize(a);
+    }
     do {
-        if (i >= a->cap) {
-            bignum_resize(a);
-        }
         this = b->data[i] + carry;
         if (i < a->size) { // avoid summing garbage
             this += a->data[i];
         }
         carry = this > 255;
-        if (carry) {
-            this -= 256;
-        }
+        this -= 256 * carry;
         a->data[i] = this;
         ++i;
     } while (i < b->size);
