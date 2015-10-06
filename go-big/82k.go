@@ -56,7 +56,7 @@ func checkBase(n *big.Int, base int) bool {
 
 func search() {
 	n5 := big.NewInt(1)
-	baseCap := 5
+	baseCap := 4
 	for len(n5.Bytes()) < 4 {
 		n := baseConvert(n5)
 		//println(n5.String(), n.String())
@@ -68,7 +68,7 @@ func search() {
 			base -= 1
 		}
 		if base == 2 {
-			fmt.Printf("covers all bases from 2 to %d: %s\n", baseCap, n)
+			fmt.Printf("covers all bases from 2 to %d: %s\n", baseCap+1, n)
 		}
 		n5.Add(n5, big.NewInt(1))
 	}
