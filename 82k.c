@@ -105,9 +105,8 @@ void search() {
         }
         bignum_inc(&n5);
         if (n5.size > last_size) {
-            char* a = unlimited_precision_base_conv(&n5, 5);
-            printf("b5: %s\n", a);
-            free(a);
+            printf("b5: ");
+            bignum_dump(&n5);
             bignum_base_convert(&tmp, &n5);
             char* b = unlimited_precision_base_conv(&tmp, 10);
             printf("b10: %s\n", b);
