@@ -183,7 +183,7 @@ void test_bignum_from_bignum() {
     bignum bn2;
     bignum_init(&bn);
     bignum_init(&bn2);
-    bignum_init_base_convert(40, 2);
+    bignum_init_base_convert(40*8, 2);
     bignum_from_int(&bn, 1047);
     bignum_base_convert(&bn2, &bn);
     assert(bn2.size == 2);
@@ -191,7 +191,7 @@ void test_bignum_from_bignum() {
     assert(bn2.data[1] == 4);
     bignum_free_base_convert_lut();
     //
-    bignum_init_base_convert(40, 5);
+    bignum_init_base_convert(40*8, 5);
     bignum_from_int(&bn, 1);
     bignum_base_convert(&bn2, &bn);
     assert(bn2.size == 1);

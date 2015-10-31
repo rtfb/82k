@@ -88,7 +88,7 @@ void search() {
     int base_cap = 4;
     bignum_from_int(&n5, 1);
     int last_size = n5.size;
-    bignum_init_base_convert(40, 5);
+    bignum_init_base_convert(40*8, 5);
     while (n5.size < 4) {
         bignum_base_convert(&n, &n5);
         int base = base_cap;

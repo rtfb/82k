@@ -344,6 +344,9 @@ void bignum_mod(bignum *a, bignum *b) {
     bignum_free(&tmp);
 }
 
+#define SUMSZ 8
+bignum sum_lut[SUMSZ][256]; // SUMSZ*256 partial sums for SUMSZ bytes, 256 values each
+
 void bignum_init_base_convert(size_t size, int base) {
     bignum multiplier;
     bignum_init(&multiplier);
@@ -356,6 +359,24 @@ void bignum_init_base_convert(size_t size, int base) {
         bignum_mul_int(&multiplier, base);
     }
     bignum_free(&multiplier);
+
+    bignum sum;
+    bignum_init(&sum);
+    for (int i = 0; i < SUMSZ; ++i) {
+        for (int j = 0; j < 256; ++j) {
+            int m = i*8;
+            bignum_from_int(&sum, 0);
+            for (uint8_t mask = 1; mask != 0; mask <<= 1) {
+                if (j & mask) {
+                    bignum_add(&sum, &mul_lut[m]);
+                }
+                ++m;
+            }
+            bignum_init(&sum_lut[i][j]);
+            bignum_copy(&sum_lut[i][j], &sum);
+        }
+    }
+    bignum_free(&sum);
 }
 
 void bignum_free_base_convert_lut() {
@@ -365,19 +386,18 @@ void bignum_free_base_convert_lut() {
     free(mul_lut);
     mul_lut = NULL;
     mul_lut_size = 0;
+    for (int i = 0; i < SUMSZ; ++i) {
+        for (int j = 0; j < 256; ++j) {
+            bignum_free(&sum_lut[i][j]);
+        }
+    }
 }
 
 // assign n from s, treat s as being in base 'base'
 void bignum_base_convert(bignum *n, bignum* s) {
     bignum_from_int(n, 0);
-    int m = 0;
     for (int i = 0; i < s->size; ++i) {
-        for (uint8_t mask = 1; mask != 0; mask <<= 1) {
-            if (s->data[i] & mask) {
-                bignum_add(n, &mul_lut[m]);
-            }
-            ++m;
-        }
+        bignum_add(n, &sum_lut[i][s->data[i]]);
     }
 }
 
